@@ -1,5 +1,9 @@
 require 'sinatra'
 
-get '/' do
-  "Go Time"
+class Samhain < Sinatra::Base
+  
+  get '/' do
+    "Go Time"
+  end
+  
 end
