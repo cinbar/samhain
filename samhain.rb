@@ -43,37 +43,36 @@ class Samhain < Sinatra::Base
       startup_ids.gsub! /\[(.*)\]/, '\1'
       startup_ids = startup_ids.split(",")
     
-      body = ""
-      # we want to go through each startup and get its jobs info
-      # this will ping x companies
-      number_of_companies = 1
-      startup_ids.first(number_of_companies).each do |startup_id|
-        puts "scraping #{startup_id}"
+      body = "Scraping #{startup_ids.count} companies"
+      startup_ids.each do |startup_id|
         url = URI.parse("#{ANGEL_API_URL}/1/startups/#{startup_id}/jobs")
+        @company_id = startup_id
         begin 
           req = Net::HTTP::Get.new(url.path)
           http = Net::HTTP.new(url.host, url.port)
           http.use_ssl = true
           response = http.request(req)
           list_of_jobs = JSON.parse(response.body)
-          puts "Loading #{list_of_jobs.count} jobs from #{startup_id}"
+          puts "Found #{list_of_jobs.count} jobs for #{startup_id}"
           list_of_jobs.each do |job_json|
             job_info = {
-                source_url: url,
-                source_id: startup_id,
+                source_url: url.path,
+                source_id: "ANGEL",
+                source_job_id: job_json["id"],
+                source_company_id: @company_id,
                 timestamp: Time.now,
                 json: job_json.to_json,
             }
             send_to_recruiter(job_info)
-            body += job_info.to_s if job_info
+            
+            body += @company_id
           end
-
-          #http.finish
         rescue Exception => ex
           puts "Exeption: #{ex}"
         end
+        sleep(2)
       end
-
+      body += "Finished at #{Time.now}"
       body
     end
   end
@@ -86,7 +85,7 @@ class Samhain < Sinatra::Base
   end
   
   def send_to_recruiter(data)
-    uri = URI.parse("#{RECRUITER_URL}/jobs")
+    uri = URI.parse("#{RECRUITER_URL}/api/jobs")
     http = Net::HTTP.new(uri.host, uri.port)
 
     request = Net::HTTP::Post.new(uri.request_uri)
