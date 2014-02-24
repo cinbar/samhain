@@ -70,7 +70,8 @@ class Samhain < Sinatra::Base
         rescue Exception => ex
           puts "Exeption: #{ex}"
         end
-        sleep(2)
+        # 1000 requests per hour / 3600 seconds means if we request once every 4 seconds we shouldn't get rate limited.
+        sleep(4)
       end
       body += "Finished at #{Time.now}"
       body
