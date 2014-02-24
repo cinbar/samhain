@@ -12,6 +12,11 @@ class Samhain < Sinatra::Base
   register Sinatra::ConfigFile
   configure :development do
     register Sinatra::Reloader
+    RECRUITER_URL = "http://localhost:3000"
+  end
+  
+  configure :production do
+    RECRUITER_URL = "http://offerapp.herokuapp.com"
   end
   
   ANGEL_API_URL = "https://api.angel.co"
@@ -81,7 +86,7 @@ class Samhain < Sinatra::Base
   end
   
   def send_to_recruiter(data)
-    uri = URI.parse("http://localhost:3000/jobs")
+    uri = URI.parse("#{RECRUITER_URL}/jobs")
     http = Net::HTTP.new(uri.host, uri.port)
 
     request = Net::HTTP::Post.new(uri.request_uri)
