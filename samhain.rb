@@ -11,6 +11,7 @@ class Samhain < Sinatra::Base
   register Sinatra::Namespace
   register Sinatra::ConfigFile
   @@polling = false
+  @@job_number = 0
   def is_polling?
     !!@@polling
   end
@@ -31,14 +32,15 @@ class Samhain < Sinatra::Base
     end
     
     get '/angel' do
-      return "Sorry I'm busy" if self.is_polling?
+      return "Sorry I'm busy. Currently on job number #{@@job_number} of #{@@startup_ids.count}" if self.is_polling?
       id_list = get_list_of_ids
       return "Failed to fetch startups" unless id_list
-      startup_ids = parse_startup_ids(id_list)
+      @@startup_ids ||= parse_startup_ids(id_list)
       
       body = "Scraping #{startup_ids.count} companies"
       @@polling = true
-      startup_ids.first(1).each do |startup_id|
+      @@job_number = 0
+      @@startup_ids.each do |startup_id|
         begin
           startup_json = startup(startup_id)
         rescue Exception => ex
@@ -64,6 +66,7 @@ class Samhain < Sinatra::Base
                 timestamp: Time.now,
                 json: job_json.to_json,
             }
+            @@job_number += 1
             send_to_recruiter(job_info)
             
             body += @company_id
