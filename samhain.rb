@@ -41,7 +41,7 @@ class Samhain < Sinatra::Base
       return "Failed to fetch startups" unless id_list
       @@startup_ids ||= parse_startup_ids(id_list)
       
-      body = "Scraping #{startup_ids.count} companies"
+      body = "Scraping #{@@startup_ids.count} companies"
       @@polling = true
       @@job_number = 0
       @@startup_ids.each do |startup_id|
