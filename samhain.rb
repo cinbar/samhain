@@ -16,6 +16,10 @@ class Samhain < Sinatra::Base
     !!@@polling
   end
   
+  configure :production, :development do
+    enable :logging
+  end
+    
   configure :development do
     register Sinatra::Reloader
   end
