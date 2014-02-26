@@ -26,7 +26,7 @@ class Samhain < Sinatra::Base
   end
   
   get '/' do
-    "All Systems Go"
+    "All Systems Go, sending to #{settings.recruiter_url}"
   end
   
   namespace "/scrape" do
