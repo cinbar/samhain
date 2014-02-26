@@ -1,0 +1,7 @@
+API_KEY: "75sd8pnvjei2fp"
+API_SECRET: "1auiezGBRydEPwDr"
+REDIRECT_URI: "http://localhost:9292/accept"
+angel_api_url: "https://api.angel.co"
+recruiter_url:
+  development: "http://localhost:3000"
+  production: "http://offerapp.herokuapp.com"
