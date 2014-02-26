@@ -18,6 +18,7 @@ class Samhain < Sinatra::Base
   
   configure :production, :development do
     enable :logging
+    config_file "./config.yml"
   end
     
   configure :development do
@@ -147,11 +148,11 @@ class Samhain < Sinatra::Base
   end
   
   def angel_api_url
-    settings['angel_api_url']
+    settings.angel_api_url
   end
   
   def recruiter_url
-    settings['recruiter_url']
+    settings.recruiter_url
   end
   
 end
